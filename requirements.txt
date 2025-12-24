@@ -1,0 +1,4 @@
+python-dotenv==1.2.1
+httpx==0.28.1
+ruff==0.14.10
+aiofiles==25.1.0
