@@ -48,9 +48,9 @@ class GitHubClient:
             logger.info("Запись okved.json")
             async with aiofiles.open(
                 self.cache_file, "w", encoding="utf-8"
-            ) as f: 
-                json.dump(data, f, ensure_ascii=False, indent=4)
-
+            ) as f:
+                payload = json.dumps(data, ensure_ascii=False, indent=4)
+                await f.write(payload)
                 return data
 
     async def _read_okved_json(self) -> List[Dict[str, str]]:
@@ -59,8 +59,8 @@ class GitHubClient:
         """
         logger.info("Чтение okved.json")
         async with aiofiles.open(self.cache_file, "r", encoding="utf-8") as f:
-            content = await f.read() 
-            return json.load(content)
+            content = await f.read()
+            return json.loads(content)
 
     async def get_okved_data(self) -> List[Dict[str, str]]:
         """
@@ -73,6 +73,5 @@ class GitHubClient:
 
             if file_age < 86400:
                 return await self._read_okved_json()
-            
+
         return await self._load_okved_json()
-    

@@ -6,6 +6,8 @@ from services.okved_mather import OkvedMatcher
 from services.okved_parser import OkvedParser
 from services.phone_normalizer import PhoneNormalizer
 from services.uploader import GitHubClient
+from utils.exceptions import DataLoadError
+from utils.exceptions import NormalizationError
 
 logging.basicConfig(
     level=logging.INFO,
@@ -23,11 +25,17 @@ async def run_game():
     logger.info("Инициализация системы...")
     client = GitHubClient()
     parser = OkvedParser()
+    noramlizer = PhoneNormalizer()
 
     try:
-        raw_data = await client.get_okved_data()
+        try:
+            raw_data = await client.get_okved_data()
+        except DataLoadError as error:
+            print(f"❌ Ошибка: {error}")
+
         flat_data = parser.flatten_okved(raw_data)
         matcher = OkvedMatcher(flat_data)
+
     except Exception as e:
         logger.error(f"Не удалось запустить игру: {e}")
         return
@@ -41,19 +49,19 @@ async def run_game():
         if user_input.lower() in ["exit", "отмена", "ку"]:
             print("Спасибо за игру!")
             break
-
-        normalized, error = PhoneNormalizer.normalize_phone(user_input)
-        if not normalized:
+        try:
+            normalized = noramlizer.normalize_phone(phone=user_input)
+        except NormalizationError as error:
             print(f"❌ Ошибка: {error}")
             continue
 
-        result, length = matcher.find_match(normalized)
+        result = matcher.find_match(normalized)
 
         if result:
             print("✅ УСПЕХ!")
             print(f"   • Номер: {normalized}")
-            print(f"   • ОКВЭД: {result['original_code']} — {result['name']}")
-            print(f"   • Длина совпадения: {length} симв.")
+            print(f"   • ОКВЭД: {result['code']} — {result['name']}")
+            print(f"   • Длина совпадения: {result['match_len']} симв.")
         else:
             print("🔍 Ничего не нашли даже в резервах.")
 

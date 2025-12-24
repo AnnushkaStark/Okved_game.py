@@ -13,8 +13,8 @@ class PhoneNormalizer:
         возвращает строку только из цифр
         """
         logger.info("Очистка номера телефона")
-        digits = re.sub(r"\D", "", phone)
-        return digits
+        clean_phone = re.sub(r"\D", "", phone)
+        return clean_phone
 
     def normalize_phone(self, phone: str) -> str:
         """
@@ -24,16 +24,15 @@ class PhoneNormalizer:
         clean_phone = self._clean_phone(phone=phone)
 
         match len(clean_phone):
-            case 9:
+            case 10:
                 logger.info("Длина ввеенного номера 9  цифр")
                 if clean_phone.startswith("9"):
                     logger.info("Номер нормализован")
                     return f"+7{clean_phone}"
-
                 logger.warning("Ошибка нормализации некорректный номер")
                 raise NormalizationError("Некорректный номер телефона")
 
-            case 10:
+            case 11:
                 logger.info("Длина введенного номера 10  цифр")
                 if clean_phone.startswith("8"):
                     logger.info("Номер нормализован")
@@ -42,7 +41,6 @@ class PhoneNormalizer:
                 elif clean_phone.startswith("7"):
                     logger.info("Номер нормализован")
                     return f"+{clean_phone}"
-
                 logger.warning("Ошибка нормализации некорректный номер")
                 raise NormalizationError("Некорректный номер телефона")
 

@@ -4,8 +4,6 @@ from typing import Dict
 from typing import List
 from typing import Optional
 
-from utils.exceptions import MatchingNotFoundError
-
 logger = logging.getLogger("OkvedMatcher")
 
 
@@ -40,7 +38,7 @@ class OkvedMatcher:
         for i in range(max(0, idx - 1), min(len(self.keys), idx + 1)):
             rev_code, item = self.indexed_data[i]
 
-            logger.info("Подстчет длины совпадений")
+            logger.info("Подсчет длины совпадений")
             match_len = 0
             for c1, c2 in zip(target, rev_code, strict=True):
                 if c1 == c2:
@@ -50,7 +48,7 @@ class OkvedMatcher:
             logger.info("Проверка максимальной длины совпадений")
             if match_len > max_len:
                 logger.info(
-                    "Cовпадени найдено переоперделяем код оквед и  максимальную длину"
+                    "Cовпадение найдено переопределяем код оквед и  максимальную длину"
                 )
                 max_len = match_len
                 best_match = item
