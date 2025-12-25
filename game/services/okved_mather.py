@@ -40,7 +40,7 @@ class OkvedMatcher:
 
             logger.info("Подсчет длины совпадений")
             match_len = 0
-            for c1, c2 in zip(target, rev_code, strict=True):
+            for c1, c2 in zip(target, rev_code, strict=False):
                 if c1 == c2:
                     match_len += 1
                 else:
